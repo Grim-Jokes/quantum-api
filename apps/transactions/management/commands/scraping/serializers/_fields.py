@@ -27,7 +27,7 @@ class DateField(Field):
         self.date = datetime.strptime(self.value, "%b %d, %Y")
 
     def to_value(self):
-        return self.date.strftime("%m/%d/%Y")
+        return self.date.strftime("%Y-%m-%d")
 
 
 class DecimalField(Field):
