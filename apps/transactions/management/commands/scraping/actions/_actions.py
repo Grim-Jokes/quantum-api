@@ -32,18 +32,18 @@ class DetailAction(Action):
         logger.info("Clicking detail link")
         link = self.session.css("div.type a")[1]
         link.click()
-        
 
 
 class SelectMonthAction(Action):
 
     def execute(self):
         logger.info('Selecting radio button')
-        buttons = self.session.css("ui-radiobutton")
+        button_class = 'ui-button.ember-view.ui-size-medium.ui-display-link.ui-button.non-active'
+        buttons = self.session.css(button_class)
         if not buttons:
             logger.error('.ui-radiobutton element not found')
             self.session.render('error.png')
-        buttons[1].click()
+        buttons[2].click()
 
 
 class SubmitAction(Action):

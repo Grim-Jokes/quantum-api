@@ -10,7 +10,8 @@ class PcScraper(object):
 
         self.session = dryscrape.Session()
 
-        self.session.set_attribute('local_content_can_access_remote_urls', True)
+        self.session.set_attribute(
+            'local_content_can_access_remote_urls', True)
         self.session.set_attribute('local_storage_enabled', True)
         self.session.set_attribute('local_storage_database_enabled', True)
         self.session.set_attribute('local_content_can_access_file_urls', True)
@@ -27,5 +28,11 @@ class PcScraper(object):
         username_field.set(value)
 
     def login(self):
-        self.enter_field(self.username_field_selector, self.credentials['username'])
-        self.enter_field(self.password_field_selector, self.credentials['password'])
+        self.enter_field(
+            self.username_field_selector,
+            self.credentials['username']
+        )
+        self.enter_field(
+            self.password_field_selector,
+            self.credentials['password']
+        )
