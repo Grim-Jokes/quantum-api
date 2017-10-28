@@ -1,0 +1,30 @@
+version: '2'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/quantum
+    links:
+      - db
+  pg-admin4:
+    image: fenglc/pgadmin4
+    ports:
+      - "5050:5050"
+    links:
+      - db
+    volumes:
+      - .:/quantum 
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: quantum
+      POSTGRES_USER: quantum
+      POSTGRES_PASSWORD: quantum
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-db:/var/lib/postgresql/data/
+volumes:
+  data-db:
