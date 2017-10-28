@@ -25,7 +25,12 @@ SECRET_KEY = 'nmkb*8yl%l&==%dc44bv$o7t3cni&ag@$5o-yxdz@jsmz73p%-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '0.0.0.0',
+    '127.0.0.1',
+    '192.168.30.10',
+]
 
 
 # Application definition
@@ -37,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'apps.transactions'
 ]
 
@@ -77,9 +83,9 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'analyst',
-        'USER': 'dan',
-        'PASSWORD': 'q',
+        'NAME': 'quantum',
+        'USER': 'quantum',
+        'PASSWORD': 'quantum',
         'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '5432')
     }
