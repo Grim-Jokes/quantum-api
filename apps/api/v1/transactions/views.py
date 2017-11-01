@@ -6,11 +6,25 @@ from . import serializers
 
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
-
     serializer_class = serializers.TransactionSerializer
 
     def get_queryset(self):
-        return Transaction.objects.all()
+        return Transaction.objects.filter(cateogry_id=None)
+
+
+class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
+
+    serializer_class = serializers.TransactionSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+
+        context['count'] = self.get_queryset().count()
+
+        return context
+
+    def get_queryset(self):
+        return Transaction.objects.filter(category_id=self.kwargs['category_pk'])
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
