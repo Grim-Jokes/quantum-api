@@ -4,10 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: "python ./manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/quantum
     links:
       - db
+    ports:
+      - "8000:8000"
   pg-admin4:
     image: fenglc/pgadmin4
     ports:

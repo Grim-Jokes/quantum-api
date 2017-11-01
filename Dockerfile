@@ -11,3 +11,7 @@ RUN apt-get update \
 RUN mkdir /quantum
 
 WORKDIR /quantum
+
+COPY ./requirements requirements
+
+RUN pip install -r /quantum/requirements/requirements.txt

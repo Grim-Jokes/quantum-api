@@ -6,15 +6,21 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = '__all__'
 
-class ParentCategorySerializer(serializers.ModelSerializer):
-
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
 
-class CategorySerializer(serializers.ModelSerializer):
-    parent_category = ParentCategorySerializer()
+class ChildCategorySerializer(serializers.ModelSerializer):
+    children = CategorySerializer(many=True)
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'children']
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    children = ChildCategorySerializer(many=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'children']

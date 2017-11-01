@@ -15,7 +15,7 @@ class AuditableModel(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     parent_category = models.ForeignKey(
-        'transactions.Category', null=True, blank=True
+        'self', null=True, blank=True, related_name="children"
     )
 
     def __str__(self):
