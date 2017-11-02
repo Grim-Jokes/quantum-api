@@ -29,7 +29,7 @@ class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
-    serializer_class = serializers.SubCategorySerializer
+    serializer_class = serializers.RootCategorySerializer
 
     def get_queryset(self):
         res = Category.objects.filter(

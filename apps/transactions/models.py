@@ -17,6 +17,7 @@ class Category(models.Model):
     parent_category = models.ForeignKey(
         'self', null=True, blank=True, related_name="children"
     )
+    limit = models.DecimalField(decimal_places=2, max_digits=7, default=0)
 
     def __str__(self):
         return f"{self.pk}. {self.name}"
