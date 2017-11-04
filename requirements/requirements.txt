@@ -19,3 +19,4 @@ six==1.10.0
 webkit-server==1.0
 wrapt==1.10.11
 xvfbwrapper==0.2.8
+drf-nested-routers
