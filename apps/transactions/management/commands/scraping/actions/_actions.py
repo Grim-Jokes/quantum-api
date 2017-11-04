@@ -7,9 +7,16 @@ import logging
 logger = logging.getLogger()
 
 
+class ShowLoginModal(Action):
+    def execute(self):
+        button_css = 'button.dropdown-button.open-solid-red'
+        button = self.session.at_css(button_css)
+        button.click()
+
+
 class LoginAction(Action):
     def execute(self):
-        button_css = "ui-button.ember-view.primary.ui-size-medium.ui-display-default.ui-button.ui-trailing-icon"
+        button_css = "button[type='submit']"
         button = self.session.at_css(button_css)
         button.click()
 
@@ -38,12 +45,12 @@ class SelectMonthAction(Action):
 
     def execute(self):
         logger.info('Selecting radio button')
-        button_class = 'ui-button.ember-view.ui-size-medium.ui-display-link.ui-button.non-active'
+        button_class = 'ui-radiobutton.ui-display-default'
         buttons = self.session.css(button_class)
         if not buttons:
             logger.error('.ui-radiobutton element not found')
             self.session.render('error.png')
-        buttons[2].click()
+        buttons[1].click()
 
 
 class SubmitAction(Action):
