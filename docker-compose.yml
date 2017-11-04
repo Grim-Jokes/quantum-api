@@ -1,5 +1,15 @@
 version: '2'
 services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: quantum
+      POSTGRES_USER: quantum
+      POSTGRES_PASSWORD: quantum
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-db:/var/lib/postgresql/data/
   web:
     build:
       context: .
@@ -11,6 +21,8 @@ services:
       - db
     ports:
       - "8000:8000"
+    environment:
+      - DB_HOST=192.168.33.10
   pg-admin4:
     image: fenglc/pgadmin4
     ports:
@@ -19,15 +31,6 @@ services:
       - db
     volumes:
       - .:/quantum 
-  db:
-    image: postgres
-    environment:
-      POSTGRES_DB: quantum
-      POSTGRES_USER: quantum
-      POSTGRES_PASSWORD: quantum
-    ports:
-      - "5432:5432"
-    volumes:
-      - data-db:/var/lib/postgresql/data/
+  
 volumes:
   data-db:
