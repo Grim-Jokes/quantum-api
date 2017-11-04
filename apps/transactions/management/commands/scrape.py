@@ -1,9 +1,8 @@
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand
 from .scraping.chequing_scrapers import PCChequingScraper
-from .scraping.input import Input
 from .scraping.categorizer import Categorizer
 
-from apps.transactions.models import Transaction, Category
+from apps.transactions.models import Transaction
 
 
 class Command(BaseCommand):
@@ -38,10 +37,8 @@ class Command(BaseCommand):
             self.insert(expenses)
             self.insert(income)
 
-            Input(
-                Transaction.objects.all(),
-                Categorizer()
-            ).categorize()
+            for transaction in Transaction.objects.all():
+                Categorizer().categorize(transaction)
 
         except Exception as e:
             self.stderr.write(str(e))

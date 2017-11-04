@@ -9,22 +9,14 @@ class Categorizer:
 
         self.transactions = Transaction.objects.all()
 
-    def get_root_categories(self):
-        return self.categories.filter(
-            parent_category=None
-        )
-
-    def get(self, pk):
-        return self.categories.get(pk=pk)
-
-    def get_child_categories(self, parent_category):
-        return self.categories.filter(parent_category_id=parent_category)
-
     def find_matches(self, transaction):
         matches = [
             (x, fuzz.token_sort_ratio(x.description, transaction.description))
             for x in self.transactions
-            if fuzz.token_sort_ratio(x.description, transaction.description) >= 90
+            if fuzz.token_sort_ratio(
+                x.description,
+                transaction.description
+            ) >= 90
             and x.category
         ]
 
@@ -39,15 +31,6 @@ class Categorizer:
                 transaction.category = trans.category
                 transaction.save()
                 return trans.category
-
-            raise NotImplementedError()
-        elif len(matches) > 1:
-            categories = list(set([x.category for (x, s) in matches]))
-
-            if len(categories) == 1:
-                transaction.category = categories[0]
-                transaction.save()
-                return categories[0]
 
     def categorize(self, transaction):
         matches = self.find_matches(transaction)
