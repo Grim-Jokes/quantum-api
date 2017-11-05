@@ -5,13 +5,18 @@ from apps.transactions.models import Transaction, Category
 
 
 def get_income(instance):
-    return instance.parent_category_id == 1 or instance.parent_category.parent_category_id == 1
+    return (
+        instance.id == 1 or
+        instance.parent_category and instance.parent_category_id == 1 or
+        instance.parent_category and
+        instance.parent_category.parent_category_id == 1
+    )
 
 
 def get_limit(instance):
     if not instance.children.exists():
         return instance.limit
-    return None
+    return 0.0
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -45,6 +50,11 @@ class ChildCategorySerializer(serializers.ModelSerializer):
     children = GrandChildCategorySerializer(many=True)
     values = serializers.SerializerMethodField()
     income = serializers.SerializerMethodField()
+    limit = serializers.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        write_only=True
+    )
 
     def get_values(self, instance):
         result = (
@@ -58,9 +68,16 @@ class ChildCategorySerializer(serializers.ModelSerializer):
     def get_income(self, instance):
         return get_income(instance)
 
+    def update(self, instance, validated_data):
+        print(validated_data)
+        instance.limit = validated_data['limit']
+        instance.save(update_fields=['limit'])
+
+        return instance
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'income', 'values',  'children']
+        fields = ['id', 'name', 'income', 'values',  'children', 'limit']
 
 
 class RootCategorySerializer(serializers.ModelSerializer):

@@ -1,6 +1,4 @@
-from django.db.models import Prefetch
-
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from apps.transactions.models import Transaction, Category
 from . import serializers
 
@@ -24,16 +22,32 @@ class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
         return context
 
     def get_queryset(self):
-        return Transaction.objects.filter(category_id=self.kwargs['category_pk'])
+        return Transaction.objects.filter(
+            category_id=self.kwargs['category_pk']
+        )
 
 
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+class CategoryViewSet(
+        mixins.UpdateModelMixin,
+        viewsets.ReadOnlyModelViewSet):
+
+    lookup_value_regex = '\d+'
 
     serializer_class = serializers.RootCategorySerializer
 
+    def get_serializer_class(self):
+        if self.action in ['retrieve', 'partial_update']:
+            return serializers.ChildCategorySerializer
+        else:
+            return serializers.RootCategorySerializer
+
     def get_queryset(self):
-        res = Category.objects.filter(
-            parent_category=None
-        ).select_related('parent_category')
+
+        if self.action in ['retrieve', 'partial_update', 'update']:
+            return Category.objects.all().select_related('parent_category')
+        else:
+            res = Category.objects.filter(
+                parent_category=None
+            ).select_related('parent_category')
 
         return res
