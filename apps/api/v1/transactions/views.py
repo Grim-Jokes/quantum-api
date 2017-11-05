@@ -1,3 +1,5 @@
+from django.db.models import Prefetch
+
 from rest_framework import viewsets, mixins
 from apps.transactions.models import Transaction, Category
 from . import serializers
@@ -46,8 +48,14 @@ class CategoryViewSet(
         if self.action in ['retrieve', 'partial_update', 'update']:
             return Category.objects.all().select_related('parent_category')
         else:
-            res = Category.objects.filter(
-                parent_category=None
-            ).select_related('parent_category')
+            p = Prefetch('children', Category.objects.all().order_by('order'))
+
+            res = (
+                Category.objects.filter(
+                    parent_category=None
+                ).prefetch_related(p)
+                .order_by('order', 'parent_category')
+
+            )
 
         return res

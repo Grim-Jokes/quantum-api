@@ -19,6 +19,9 @@ class Category(models.Model):
     )
     limit = models.DecimalField(decimal_places=2, max_digits=7, default=0)
 
+    # Order relative within the parent
+    order = models.IntegerField()
+
     def __str__(self):
         return f"{self.pk}. {self.name}"
 
