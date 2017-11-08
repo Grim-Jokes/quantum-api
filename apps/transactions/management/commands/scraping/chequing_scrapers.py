@@ -1,5 +1,7 @@
 import logging
 
+from datetime import datetime
+
 from .scrapers import PcScraper
 
 from .actions import (
@@ -7,6 +9,7 @@ from .actions import (
     LoginAction,
     ParseAction,
     SelectMonthAction,
+    SelectMonthButtonAction,
     ShowLoginModal,
     SubmitAction,
     WaitAction
@@ -33,23 +36,46 @@ class PCChequingScraper(PcScraper):
 
         WaitAction(self.session).execute()
 
-    def scrape(self):
-        try:
-            WaitAction(self.session).execute()
+    def get_current_month(self):
+        return datetime.today().month
 
-            ClickDetailAction(self.session).execute()
+    def go_to_detail_page(self):
 
-            WaitAction(self.session).execute()
+        WaitAction(self.session).execute()
 
-            SelectMonthAction(self.session).execute()
+        ClickDetailAction(self.session).execute()
 
-            SubmitAction(self.session, "ui-button.primary")
+        WaitAction(self.session).execute()
+
+    def get_all_transactions(self, all_expenses, all_income):
+
+        current_month = self.get_current_month()
+
+        for month in range(1, current_month + 1):
+
+            SelectMonthAction(self.session, month).execute()
+
+            SubmitAction(self.session, "ui-button.primary").execute()
 
             WaitAction(self.session).execute()
 
             expenses, income = ParseAction(self.session).execute()
 
-            return expenses, income
+            all_expenses.extend(expenses)
+            all_income.extend(all_income)
+
+    def scrape(self):
+        try:
+            self.go_to_detail_page()
+
+            all_expenses = []
+            all_income = []
+
+            SelectMonthButtonAction(self.session).execute()
+
+            self.get_all_transactions(all_expenses, all_income)
+
+            return all_expenses, all_income
         except Exception as e:
             self.session.render('error.png')
             raise e

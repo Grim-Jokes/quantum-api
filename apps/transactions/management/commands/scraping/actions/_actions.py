@@ -22,9 +22,13 @@ class LoginAction(Action):
 
 
 class WaitAction(Action):
+    def __init__(self, session, selector='div.ui-indicator'):
+        self.selector = selector
+        super().__init__(session)
+
     def __wait_for_loading(self):
         """If the indicator is gone, it means the data should be loaded"""
-        loading = self.session.at_css("div.ui-indicator")
+        loading = self.session.at_css(self.selector)
 
         return loading is None
 
@@ -37,20 +41,34 @@ class ClickDetailAction(Action):
 
     def execute(self):
         logger.info("Clicking detail link")
-        link = self.session.css("div.type a")[1]
+        link = self.session.at_css("tbody tr:nth-child(2) div.type a", 5)
         link.click()
+
+
+class SelectMonthButtonAction(Action):
+
+    def execute(self):
+        logger.info('Selecting radio button')
+        button_class = (
+            '.month ui-radiobutton.ember-view.ui-radiobutton'
+            '.ui-display-default'
+        )
+        button = self.session.at_css(button_class)
+        button.click()
 
 
 class SelectMonthAction(Action):
 
+    def __init__(self, session, month):
+        self.month = month
+        super().__init__(session)
+
     def execute(self):
-        logger.info('Selecting radio button')
-        button_class = 'ui-radiobutton.ui-display-default'
-        buttons = self.session.css(button_class)
-        if not buttons:
-            logger.error('.ui-radiobutton element not found')
-            self.session.render('error.png')
-        buttons[1].click()
+        logger.info(f'Selecting month {self.month}')
+        dropdown_select = '.month select.ember-view.ember-select'
+        dropdown = self.session.css(dropdown_select)[0]
+        dropdown.set(self.month)
+        dropdown.select_option()
 
 
 class SubmitAction(Action):
@@ -64,6 +82,7 @@ class SubmitAction(Action):
         logger.info('Hitting submit button')
         submit_button = self.session.at_css(self.selector)
         submit_button.click()
+        self.session.render('yo.png')
 
 
 class ParseAction(Action):

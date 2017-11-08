@@ -4,6 +4,7 @@ from ._actions import ( # noqa
     LoginAction,
     ParseAction,
     SelectMonthAction,
+    SelectMonthButtonAction,
     ShowLoginModal,
     SubmitAction,
     WaitAction
