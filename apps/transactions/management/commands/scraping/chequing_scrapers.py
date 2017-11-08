@@ -62,7 +62,7 @@ class PCChequingScraper(PcScraper):
             expenses, income = ParseAction(self.session).execute()
 
             all_expenses.extend(expenses)
-            all_income.extend(all_income)
+            all_income.extend(income)
 
     def scrape(self):
         try:

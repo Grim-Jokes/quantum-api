@@ -226,9 +226,9 @@ def add_categories(apps, *args):
 
 
 def delete_categories(apps, *args):
-    Category = apps.get_models('apps.transacations', 'Category')
+    Category = apps.get_model('transactions', 'Category')
 
-    Category.objects.delete()
+    Category.objects.all().delete()
 
 
 class Migration(migrations.Migration):

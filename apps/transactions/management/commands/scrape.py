@@ -1,8 +1,8 @@
 from django.core.management import BaseCommand
 from .scraping.chequing_scrapers import PCChequingScraper
-from .scraping.categorizer import Categorizer
 
-from apps.transactions.models import Transaction
+
+from apps.transactions.models import Transaction, Description
 
 
 class Command(BaseCommand):
@@ -20,10 +20,12 @@ class Command(BaseCommand):
         for transaction in transactions:
             date, value, description = transaction[0:3]
 
+            desc, created = Description.objects.get_or_create(name=description)
+
             trans, created = Transaction.objects.get_or_create(
                 date=date,
                 value=value,
-                description=description
+                name=desc
             )
 
     def scrape_presidents_choice(self, config):
@@ -36,9 +38,6 @@ class Command(BaseCommand):
 
             self.insert(expenses)
             self.insert(income)
-
-            for transaction in Transaction.objects.all():
-                Categorizer().categorize(transaction)
 
         except Exception as e:
             self.stderr.write(str(e))

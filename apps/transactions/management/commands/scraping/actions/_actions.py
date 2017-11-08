@@ -82,7 +82,6 @@ class SubmitAction(Action):
         logger.info('Hitting submit button')
         submit_button = self.session.at_css(self.selector)
         submit_button.click()
-        self.session.render('yo.png')
 
 
 class ParseAction(Action):

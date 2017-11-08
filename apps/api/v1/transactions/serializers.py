@@ -20,6 +20,9 @@ def get_limit(instance):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='name.name')
+
     class Meta:
         model = Transaction
         fields = '__all__'
