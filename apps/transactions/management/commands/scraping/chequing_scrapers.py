@@ -3,7 +3,7 @@ import logging
 from .scrapers import PcScraper
 
 from .actions import (
-    DetailAction,
+    ClickDetailAction,
     LoginAction,
     ParseAction,
     SelectMonthAction,
@@ -36,8 +36,8 @@ class PCChequingScraper(PcScraper):
     def scrape(self):
         try:
             WaitAction(self.session).execute()
-            
-            DetailAction(self.session).execute()
+
+            ClickDetailAction(self.session).execute()
 
             WaitAction(self.session).execute()
 

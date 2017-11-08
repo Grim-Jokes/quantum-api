@@ -1,6 +1,6 @@
 from ._base import Action # noqa
 from ._actions import ( # noqa
-    DetailAction,
+    ClickDetailAction,
     LoginAction,
     ParseAction,
     SelectMonthAction,

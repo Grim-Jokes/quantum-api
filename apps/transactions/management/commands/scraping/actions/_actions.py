@@ -33,7 +33,7 @@ class WaitAction(Action):
         self.session.wait_for(self.__wait_for_loading, timeout=20)
 
 
-class DetailAction(Action):
+class ClickDetailAction(Action):
 
     def execute(self):
         logger.info("Clicking detail link")
