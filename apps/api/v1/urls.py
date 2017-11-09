@@ -3,6 +3,11 @@ from apps.api.v1.transactions import views
 
 router = routers.DefaultRouter()
 router.register(r'categories', views.CategoryViewSet, base_name='categories')
+router.register(
+    r'transactions',
+    views.TransactionViewSet,
+    base_name='transactions'
+)
 
 category_router = routers.NestedSimpleRouter(
     router,

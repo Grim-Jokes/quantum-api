@@ -9,11 +9,10 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.TransactionSerializer
 
     def get_queryset(self):
-        return Transaction.objects.filter(cateogry_id=None)
+        return Transaction.objects.filter(category_id=None)
 
 
 class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
-
     serializer_class = serializers.TransactionSerializer
 
     def get_serializer_context(self):
