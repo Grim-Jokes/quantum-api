@@ -8,6 +8,8 @@ class PcScraper(object):
         self.url = url
         self.credentials = credentials
 
+        dryscrape.start_xvfb()
+
         self.session = dryscrape.Session()
 
         self.session.set_attribute(

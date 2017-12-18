@@ -28,68 +28,36 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class GrandChildCategorySerializer(serializers.ModelSerializer):
-    values = serializers.SerializerMethodField()
-    income = serializers.SerializerMethodField()
+class RootCategorySerializer(serializers.ModelSerializer):
 
-    def get_values(self, instance):
-        result = (
-            instance.transaction_set.aggregate(total=Sum('value'))
-        )
-
-        result['limit'] = get_limit(instance)
-
-        return result
-
-    def get_income(self, instance):
-        return get_income(instance)
-
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'income', 'values']
-
-
-class ChildCategorySerializer(serializers.ModelSerializer):
-    children = GrandChildCategorySerializer(many=True)
-    values = serializers.SerializerMethodField()
-    income = serializers.SerializerMethodField()
-    limit = serializers.DecimalField(
-        max_digits=7,
+    budget = serializers.DecimalField(
+        max_digits=10,
         decimal_places=2,
-        write_only=True
+        source="limit"
     )
 
-    def get_values(self, instance):
-        result = (
-            instance.transaction_set.aggregate(total=Sum('value'))
+    accumulated = serializers.SerializerMethodField()
+
+    def get_accumulated(self, category):
+        return (
+            category.transaction_set
+            .aggregate(total=Sum('value'))
+            .get('total', 0.00) or 0.00
         )
 
-        result['limit'] = get_limit(instance)
+    has_transactions = serializers.SerializerMethodField()
 
-        return result
-
-    def get_income(self, instance):
-        return get_income(instance)
-
-    def update(self, instance, validated_data):
-        print(validated_data)
-        instance.limit = validated_data['limit']
-        instance.save(update_fields=['limit'])
-
-        return instance
+    def get_has_transactions(self, category):
+        return category.transaction_set.exists()
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'income', 'values',  'children', 'limit']
-
-
-class RootCategorySerializer(serializers.ModelSerializer):
-    children = ChildCategorySerializer(many=True)
-    income = serializers.SerializerMethodField()
-
-    def get_income(self, instance):
-        return instance.id == 1
-
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'income', 'children']
+        fields = [
+            'id',
+            'name',
+            'order',
+            'budget',
+            'accumulated',
+            'children',
+            'has_transactions'
+        ]
