@@ -23,6 +23,17 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='name.name')
 
+    def update(self, instance, data):
+        updated_instance = super().update(instance, data)
+        transactions = Transaction.objects.filter(
+            name=instance.name, value=updated_instance.value
+        )
+        transactions.update(
+            category_id=updated_instance.category_id
+        )
+
+        return updated_instance
+
     class Meta:
         model = Transaction
         fields = '__all__'

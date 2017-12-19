@@ -1,15 +1,18 @@
-from django.db.models import Prefetch, Sum
+from django.db.models import Prefetch
 
 from rest_framework import viewsets, mixins
 from apps.transactions.models import Transaction, Category
 from . import serializers
 
 
-class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
+class TransactionViewSet(
+    mixins.UpdateModelMixin,
+    viewsets.ReadOnlyModelViewSet
+):
     serializer_class = serializers.TransactionSerializer
 
     def get_queryset(self):
-        return Transaction.objects.filter(category_id=None)
+        return Transaction.objects.all()
 
 
 class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -23,9 +26,10 @@ class CategoryTransactionViewSet(viewsets.ReadOnlyModelViewSet):
         return context
 
     def get_queryset(self):
-        return Transaction.objects.filter(
-            category_id=self.kwargs['category_pk']
-        )
+
+        category_pk = self.kwargs['category_pk']
+
+        return Transaction.objects.filter(category_id=category_pk)
 
 
 class CategoryViewSet(
