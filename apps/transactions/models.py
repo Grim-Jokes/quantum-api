@@ -33,6 +33,22 @@ class Description(models.Model):
     name = models.CharField(max_length=100)
 
 
+class DescriptionInfo(models.Model): 
+    """
+    Track each description per category.
+    Example: Costco 
+    I spend 70 dollars for gas on week 1. 
+    So the min AND max get set to 70.00.
+    On Week 2, I spend 75 on gas.
+    Now the min is 70, and the max is 75.
+    If on Week 3 I spend 73.25 then there is a 100% chance that this purchase
+    was for gas.
+    """
+    category = models.ForeignKey(Category)
+    max = models.DecimalField(decimal_places=2, max_digits=8)
+    min = models.DecimalField(decimal_places=2, max_digits=8)
+
+
 class Transaction(models.Model):
     date = models.DateField()
     name = models.ForeignKey(Description)
