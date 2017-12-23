@@ -1,7 +1,8 @@
 from rest_framework_nested import routers
-from apps.api.v1.transactions import views
+from .transactions import views
 
 router = routers.DefaultRouter()
+router.register(r'suggestions', views.Suggestions, base_name='suggestions')
 router.register(r'categories', views.CategoryViewSet, base_name='categories')
 router.register(
     r'transactions',

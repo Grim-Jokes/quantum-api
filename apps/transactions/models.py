@@ -33,7 +33,7 @@ class Description(models.Model):
     name = models.CharField(max_length=100)
 
 
-class DescriptionInfo(models.Model): 
+class DescriptionInfo(models.Model):
     """
     Track each description per category.
     Example: Costco 
@@ -45,6 +45,10 @@ class DescriptionInfo(models.Model):
     was for gas.
     """
     category = models.ForeignKey(Category)
+    description = models.ForeignKey(
+        Description,
+        related_name="description_info"
+    )
     max = models.DecimalField(decimal_places=2, max_digits=8)
     min = models.DecimalField(decimal_places=2, max_digits=8)
 

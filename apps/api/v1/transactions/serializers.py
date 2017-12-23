@@ -1,7 +1,7 @@
-from django.db.models import Sum
+from django.db.models import Sum, Count
 
 from rest_framework import serializers
-from apps.transactions.models import Transaction, Category
+from apps.transactions.models import Transaction, Category, DescriptionInfo
 
 
 def get_income(instance):
@@ -25,12 +25,23 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     def update(self, instance, data):
         updated_instance = super().update(instance, data)
-        transactions = Transaction.objects.filter(
-            name=instance.name, value=updated_instance.value
+
+        desc_info, created = DescriptionInfo.objects.get_or_create(
+            description=updated_instance.name,
+            defaults={
+                'category': updated_instance.category,
+                'min': 0,
+                'max': 0
+            }
         )
-        transactions.update(
-            category_id=updated_instance.category_id
-        )
+        if desc_info.min == 0:
+            desc_info.min = instance.value
+        else:
+            desc_info.min = min(instance.value, desc_info.min)
+
+        desc_info.max = max(instance.value, desc_info.max)
+
+        desc_info.save()
 
         return updated_instance
 
@@ -39,7 +50,17 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RootCategorySerializer(serializers.ModelSerializer):
+class DescriptionSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="description.name")
+    min = serializers.DecimalField(max_digits=8, decimal_places=2)
+    max = serializers.DecimalField(max_digits=8, decimal_places=2)
+
+    class Meta:
+        model = DescriptionInfo
+        fields = ['name', 'min', 'max']
+
+
+class CategorySerializer(serializers.ModelSerializer):
 
     budget = serializers.DecimalField(
         max_digits=10,
@@ -50,16 +71,21 @@ class RootCategorySerializer(serializers.ModelSerializer):
     accumulated = serializers.SerializerMethodField()
 
     def get_accumulated(self, category):
-        return (
+        total = (
             category.transaction_set
             .aggregate(total=Sum('value'))
-            .get('total', 0.00) or 0.00
+            .get('total', 0.00)
         )
+
+        return 0.00 if not total else total
 
     has_transactions = serializers.SerializerMethodField()
 
     def get_has_transactions(self, category):
         return category.transaction_set.exists()
+
+    transactions = DescriptionSerializer(
+        source='descriptioninfo_set', many=True)
 
     class Meta:
         model = Category
@@ -70,5 +96,6 @@ class RootCategorySerializer(serializers.ModelSerializer):
             'budget',
             'accumulated',
             'children',
-            'has_transactions'
+            'has_transactions',
+            'transactions'
         ]
