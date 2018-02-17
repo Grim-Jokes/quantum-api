@@ -8,7 +8,7 @@ RUN apt-get update \
         bash-completion \
     && rm -rf /var/lib/apt/lists/*
 
-run apt-get update -y
+RUN apt-get update -y
 RUN apt-get install qt5-default libqt5webkit5-dev build-essential \
                   python-lxml python-pip xvfb -y
 
