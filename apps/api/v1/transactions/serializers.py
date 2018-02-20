@@ -1,22 +1,7 @@
-from django.db.models import Sum, Count
+from django.db.models import Sum
 
 from rest_framework import serializers
 from apps.transactions.models import Transaction, Category, DescriptionInfo
-
-
-def get_income(instance):
-    return (
-        instance.id == 1 or
-        instance.parent_category and instance.parent_category_id == 1 or
-        instance.parent_category and
-        instance.parent_category.parent_category_id == 1
-    )
-
-
-def get_limit(instance):
-    if not instance.children.exists():
-        return instance.limit
-    return 0.0
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -84,9 +69,6 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_has_transactions(self, category):
         return category.transaction_set.exists()
 
-    transactions = DescriptionSerializer(
-        source='descriptioninfo_set', many=True)
-
     class Meta:
         model = Category
         fields = [
@@ -95,7 +77,5 @@ class CategorySerializer(serializers.ModelSerializer):
             'order',
             'budget',
             'accumulated',
-            'children',
-            'has_transactions',
-            'transactions'
+            'has_transactions'
         ]

@@ -1,10 +1,9 @@
-from django.db.models import Prefetch, Count, Sum
+from django.db.models import Count
 
 from rest_framework import viewsets, mixins, response
 from apps.transactions.models import Transaction, Category, DescriptionInfo
 from . import serializers
 from scipy import stats
-import numpy as np
 
 
 class Suggestions(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -101,16 +100,13 @@ class CategoryViewSet(
 
     def get_queryset(self):
         if self.action in ['retrieve', 'partial_update', 'update']:
-            return Category.objects.all().select_related('parent_category')
-
-        p = Prefetch('children', Category.objects.all().order_by('order'))
+            return Category.objects.all()
 
         res = (
             Category.objects.filter()
             .prefetch_related('transaction_set')
-            .prefetch_related(p)
             .prefetch_related('descriptioninfo_set')
-            .order_by('order', 'parent_category')
+            .order_by('order')
         )
 
         return res

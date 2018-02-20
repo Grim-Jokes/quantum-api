@@ -12,15 +12,18 @@ services:
       - data-db:/var/lib/postgresql/data/
   web:
     build:
+      args:
+        - USER_UID
+        - USER_GID
       context: .
       dockerfile: Dockerfile
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "(yes yes | python manage.py migrate) && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/quantum
     links:
       - db
     ports:
-      - "8000:8000"
+      - "8000:8000" 
     environment:
       - DB_HOST=192.168.33.10
   pg-admin4:

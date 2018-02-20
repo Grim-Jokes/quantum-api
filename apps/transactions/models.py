@@ -1,8 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-# Create your models here.
-
 
 class AuditableModel(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -14,12 +12,9 @@ class AuditableModel(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    parent_category = models.ForeignKey(
-        'self', null=True, blank=True, related_name="children"
-    )
     limit = models.DecimalField(decimal_places=2, max_digits=7, default=0)
 
-    # Order relative within the parent
+    # Order relative within the section
     order = models.IntegerField()
 
     def __str__(self):
@@ -36,8 +31,8 @@ class Description(models.Model):
 class DescriptionInfo(models.Model):
     """
     Track each description per category.
-    Example: Costco 
-    I spend 70 dollars for gas on week 1. 
+    Example: Costco
+    I spend 70 dollars for gas on week 1.
     So the min AND max get set to 70.00.
     On Week 2, I spend 75 on gas.
     Now the min is 70, and the max is 75.
