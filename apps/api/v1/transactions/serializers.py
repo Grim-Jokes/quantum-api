@@ -74,6 +74,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'type',
             'order',
             'budget',
             'accumulated',

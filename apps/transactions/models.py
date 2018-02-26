@@ -10,9 +10,14 @@ class AuditableModel(models.Model):
         abstract = True
 
 
+class CategoryType(models.Model):
+    name = models.CharField(max_length=100)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     limit = models.DecimalField(decimal_places=2, max_digits=7, default=0)
+    type = models.ForeignKey(CategoryType, default=1)
 
     # Order relative within the section
     order = models.IntegerField()

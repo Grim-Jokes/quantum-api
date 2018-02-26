@@ -9,8 +9,17 @@ def empty(*args):
     pass
 
 
+def create_category_types(apps, *args):
+    types = ["Income", "Expense"]
+
+    CategoryType = apps.get_model("transactions", "CategoryType")
+
+    for _type in types:
+        CategoryType.objects.get_or_create(name=_type)
+
+
 def foward_migration(apps, *args):
-    categories = [
+    incomes = [
         "My take-home pay",
         "My spouse/partner's take-home pay",
         "Business income (profit)",
@@ -22,15 +31,17 @@ def foward_migration(apps, *args):
         "Student loan (money received)",
         "Canada child benefit",
         "Allowance",
-        "Other Income",
+        "Other Income"
+    ]
 
+    categories = [
         "Regular savings (Major purchases, etc...)",
         "Emergency funds",
         "Tax-Free Savings Account",
         "Retirement Savings (e.g. RRSP contributions)",
         "Registered Education Savings Plan (RESP)",
         "Non registered investments (GICs, mutual funds, etc...)",
-        "Other Savings"
+        "Other Savings",
 
         "Rent",
         "Mortgage payments",
@@ -122,7 +133,7 @@ def foward_migration(apps, *args):
         "Vacation",
         "Travel insurance",
         "Other",
-      
+
         "Clothing",
         "Adults' clothes / shoes",
         "Children's clothes / shoes",
@@ -144,7 +155,7 @@ def foward_migration(apps, *args):
         "Mobile phone(s)",
         "Professional (legal, financial advice, etc...)",
         "Other services",
-        
+
         "Gifts",
         "Gifts (holiday, birthdays, special events, etc...)",
 
@@ -157,8 +168,13 @@ def foward_migration(apps, *args):
 
     Category = apps.get_model('transactions', 'Category')
 
-    for index, cat in enumerate(categories):
-        Category.objects.get_or_create(name=cat, defaults={
+    for index, cat in enumerate(incomes):
+        Category.objects.get_or_create(name=cat, type_id=1, defaults={
+            'order': index
+        })
+
+    for index, cat in enumerate(categories, index):
+        Category.objects.get_or_create(name=cat, type_id=2, defaults={
             'order': index
         })
 
@@ -170,5 +186,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(create_category_types, empty),
         migrations.RunPython(foward_migration, empty)
     ]
